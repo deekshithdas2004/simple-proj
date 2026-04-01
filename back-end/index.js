@@ -1,24 +1,23 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import express, { urlencoded } from "express";
 import cors from "cors";
 
 const app = express();
-
 app.use(express.json());
 app.use(cors());
-app.use(urlencoded({ extended: true })); // ✅ FIX
+app.use(urlencoded());
 
-// ✅ FIXED MongoDB URL
 mongoose
     .connect("mongodb://localhost:27017/procurement")
-    .then(() => {
-        console.log("Connected");
+    .then((ack) => {
+        if (ack) {
+            console.log("connected");
+        }
     })
     .catch((err) => {
         console.log("error", err);
     });
 
-// ✅ FIXED field name (buyerRemarks)
 const reqSchema = new mongoose.Schema({
     buyerRemarks: String,
     country: String,
@@ -30,42 +29,85 @@ const reqSchema = new mongoose.Schema({
     vesselName: String,
 });
 
-const requestCollection = mongoose.model("purchaseRequests", reqSchema);
+const requestCollection = new mongoose.model("purchaseRequests", reqSchema);
+
+const signupSchema = new mongoose.Schema({
+    name: String,
+    email: String,
+    password: String,
+});
+
+const signupCollection = new mongoose.model("users", signupSchema);
 
 app.post("/createRequest", (req, res) => {
-    console.log("Incoming Data:", req.body);
-
+    console.log(req.body);
     requestCollection
         .findOne({ reqNo: req.body.reqNo })
         .then((isReqExists) => {
             if (isReqExists) {
-                res.send("Please use diff PR No");
+                res.send("Please use a Different PR No");
             } else {
-                const newPurchaseRequest = new requestCollection(req.body);
-
+                const newPurchaseRequest = requestCollection(req.body);
                 newPurchaseRequest
                     .save()
-                    .then(() => {
-                        res.send("Purchase Request created successfully!");
+                    .then((isSaved) => {
+                        if (isSaved) {
+                            res.send("Purchase Request created Successfully!");
+                        } else {
+                            res.send("Error in Creating Purchase Request");
+                        }
                     })
-                    .catch((err) => {
-                        console.log(err);
-                        res.send("Error in saving data");
+                    .catch((exeerror) => {
+                        console.log(exeerror);
                     });
             }
         })
-        .catch((err) => {
-            console.log(err);
-            res.send("Error in checking request");
-        });
+        .catch(() => { });
 });
 
 app.get("/get-my-orders", async (req, res) => {
     const allOrders = await requestCollection.find();
-    console.log("my orders", allOrders);
+    console.log("my reqs", allOrders);
     res.send(allOrders);
 });
 
+app.post("/signup", (req, res) => {
+    console.log(req.body);
+    signupCollection
+        .findOne({ email: req.body.email })
+        .then((isPresent) => {
+            if (isPresent) {
+                res.send("Email Address Already in use! please try different one.");
+            } else {
+                const newAccount = signupCollection(req.body);
+                newAccount.save().then((issaved) => {
+                    if (issaved) {
+                        res.send("Account created successfully");
+                    } else {
+                        res.send("error in creating an account");
+                    }
+                });
+            }
+        })
+        .catch();
+});
+
+app.post("/login", async (req, res) => {
+    console.log("req", req.body);
+    signupCollection
+        .findOne({ email: req.body.email })
+        .then((isAuthorized) => {
+            if (isAuthorized) {
+                res.send("authorized");
+            } else {
+                res.send("unauthorized");
+            }
+        })
+        .catch((exe) => {
+            res.send("Something went wrong!.please try again");
+        });
+});
+
 app.listen(7000, () => {
-    console.log("Server started at port 7000");
+    console.log("server started at port 7000");
 });

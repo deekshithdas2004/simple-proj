@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router-dom';
+import Cookies from "js-cookie";
 
 export default function UserInfo() {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -17,8 +18,7 @@ export default function UserInfo() {
         setAnchorEl(null);
     };
 
-    function handleOrder()
-    {
+    function handleOrder() {
         navigateTo("/my-orders");
     }
 
@@ -30,6 +30,7 @@ export default function UserInfo() {
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
+                variant='contained' color='primary'
             >
                 User
             </Button>
@@ -44,9 +45,12 @@ export default function UserInfo() {
                     },
                 }}
             >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleOrder}>My Orders</MenuItem>
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                <MenuItem onClick={handleClose} sx={{ fontSize: "12px" }} >Profile</MenuItem>
+                <MenuItem onClick={handleOrder} sx={{ fontSize: "12px" }} >My Orders</MenuItem>
+                <MenuItem onClick={() => {
+                    Cookies.remove("isUserVerified");
+                    window.location.href = "/"
+                }} sx={{ fontSize: "12px" }}>Logout</MenuItem>
             </Menu>
         </div>
     );
