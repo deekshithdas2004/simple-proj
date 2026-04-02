@@ -4,6 +4,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import Box from '@mui/material/Box';
 
 export default function UserInfo() {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -24,16 +26,19 @@ export default function UserInfo() {
 
     return (
         <div>
-            <Button
-                id="basic-button"
-                aria-controls={open ? 'basic-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                onClick={handleClick}
-                variant='contained' color='primary'
-            >
-                User
-            </Button>
+            <div className='userInfo'>
+
+                <Box sx={{ display: "flex", flexDirection: "column", gap:"0px" }} >
+                    <span className='userdetails' >{Cookies.get("email")}</span>
+                    <span className='userdetails' >{Cookies.get("useName")}</span>
+                </Box>
+
+                <Box onClick={handleClick} sx={{ cursor: "pointer" }} >
+                    <ArrowDropDownIcon />
+                </Box>
+            </div>
+
+
             <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}
@@ -49,6 +54,8 @@ export default function UserInfo() {
                 <MenuItem onClick={handleOrder} sx={{ fontSize: "12px" }} >My Orders</MenuItem>
                 <MenuItem onClick={() => {
                     Cookies.remove("isUserVerified");
+                    Cookies.remove("useName");
+                    Cookies.remove("email");
                     window.location.href = "/"
                 }} sx={{ fontSize: "12px" }}>Logout</MenuItem>
             </Menu>

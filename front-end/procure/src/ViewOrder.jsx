@@ -69,4 +69,4 @@ function ViewOrder() {
     )
 }
 
-export default ViewOrder
+export default ViewOrder;

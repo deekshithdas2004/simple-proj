@@ -24,11 +24,12 @@ function CreateRequirement() {
     console.log("Submitted Data:", purchaseReq);
 
     function handleOrderNow(e) {
-        e.preventDefault(); // ✅ prevent refresh
+        e.preventDefault();
 
         axios.post("http://localhost:7000/createRequest", purchaseReq)
             .then((ack) => {
-                alert(ack.data); // ✅ alert will work now
+                alert(ack.data);
+                window.location.href="/my-orders";
             })
             .catch((err) => {
                 console.log(err);

@@ -98,9 +98,10 @@ app.post("/login", async (req, res) => {
         .findOne({ email: req.body.email })
         .then((isAuthorized) => {
             if (isAuthorized) {
-                res.send("authorized");
+                console.log(isAuthorized);
+                res.send(isAuthorized);
             } else {
-                res.send("unauthorized");
+                res.send("unAuthorized");
             }
         })
         .catch((exe) => {

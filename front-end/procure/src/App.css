@@ -556,3 +556,18 @@ textarea.input-field {
     flex-direction: column;
     gap: 30px;
 }
+
+.userInfo{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    background-color: #e1dede;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.userdetails{
+    font-size: 14px;
+    line-height: 20px;
+}

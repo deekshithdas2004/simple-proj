@@ -24,7 +24,7 @@ function SignUp() {
     {
         if(!signUpData?.email || !signUpData?.password || !signUpData?.name)
         {
-            alert("please fill all the reqired details")
+            alert("please fill all the required details")
             return;
         }
         axios.post("http://localhost:7000/signup", signUpData).then((res)=>{
